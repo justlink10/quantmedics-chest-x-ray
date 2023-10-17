@@ -71,11 +71,12 @@ class FileUpload(object):
             
         if st.sidebar.button("Analyse Chest X-ray"):
             show_file.info("Analyzing the Chest X-ray...")
-            CTR, classification, fig = an.analyze_x_ray(img)
+            CTR, classification, H_l, H_r, size_lung_l, size_lung_r, fig = an.analyze_x_ray(img)
             with col2:
                 placeholder2.pyplot(fig)
+            show_file.info("Analyzed the Chest X-ray!")
             CTR_placeholder.text(f"CTR: {CTR}")
-            lung_placeholder.write(f"Lung Ratio: {CTR/50}")
+            lung_placeholder.text(f"Lung Ratio: {size_lung_l}")
             
             st.dataframe(classification.style.highlight_max(axis=0))
  

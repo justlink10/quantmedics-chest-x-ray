@@ -28,7 +28,6 @@ def analyze_x_ray(img):
     
     seg_model = xrv.baseline_models.chestx_det.PSPNet()
     segm = seg_model(img)
-    #seg_model.targets
     segm =  segm.detach().numpy()
     segm_prob = segm
     
@@ -49,8 +48,6 @@ def analyze_x_ray(img):
     clavicula_mask = segm[:,0,...] + segm[:,1,...]
     trachea_mask = segm[:,12,...]
     
-    #plt.imshow(trachea_mask[0])
-    #plt.show()
     segm_prob *=segm
     lungs_prob = segm_prob[0,4,...]+segm_prob[0,5,...]
     max_lungs = np.quantile(lungs_prob,q=0.95)
@@ -68,15 +65,12 @@ def analyze_x_ray(img):
     lung_r_mask = np.where(lung_r_mask==clavicula_mask[0],0,lung_r_mask)
     lung_r_mask = np.where(lung_r_mask==mediastinum_mask[0],0,lung_r_mask)
     lung_r_seg = np.where(lung_r_mask!=0,img[0],0)
-    
-    #plt.imshow(lung_r_seg+lung_l_seg)
-    #plt.show()
+
     
     base = 2  # work in units of bits
     H_l = entropy(lung_l_seg[lung_l_seg>0], base=base)
     H_r = entropy(lung_r_seg[lung_r_seg>0], base=base)
     
-    #print(H_l,H_r)
     size_lung_l = np.count_nonzero(segm[:,4,...] ==1)
     size_lung_r = np.count_nonzero(segm[:,5,...] ==1)
     
@@ -210,8 +204,8 @@ def analyze_x_ray(img):
     y = [lungs_axis, lungs_axis]
     plt.plot(x_axis, y, color="blue" , linewidth=2)
     
-    x = midline_vrt[10:-10,1]
-    y = midline_vrt[10:-10,0]
+    x = midline_vrt[10:-20,1]
+    y = midline_vrt[10:-20,0]
     plt.plot(x, y, color="yellow", linewidth=1, linestyle='dashed')
     
     plt.imshow(img[0,...],cmap='bone')
@@ -219,4 +213,4 @@ def analyze_x_ray(img):
     plt.axis("off")
     plt.style.use('dark_background')
 
-    return CTR, classification, fig
+    return CTR, classification, H_l, H_r, size_lung_l, size_lung_r, fig
