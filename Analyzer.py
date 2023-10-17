@@ -20,12 +20,12 @@ from scipy.stats import entropy
 def analyze_x_ray(img):
     # Load model and process image
     model = xrv.models.DenseNet(weights="densenet121-res224-all")
-
+    print('Classify)
     "Classification of the chest x-ray"
     classification = model(img[None,...]) # or model.features(img[None,...]) 
     classification = pd.DataFrame({'Pathology': model.pathologies,'Probability':classification[0].detach().numpy()})
     #print(classification)
-    
+    print('Segment')
     seg_model = xrv.baseline_models.chestx_det.PSPNet()
     segm = seg_model(img)
     segm =  segm.detach().numpy()
@@ -36,7 +36,7 @@ def analyze_x_ray(img):
     segm = 1 / (1 + np.exp(-segm))  # sigmoid
     segm[segm < 0.5] = 0
     segm[segm > 0.5] = 1
-    
+    print('Mask')  
     heart_mask = segm[:,8,...]
     lung_l_mask = segm[:,4,...] 
     lung_r_mask =  segm[:,5,...]
@@ -66,7 +66,7 @@ def analyze_x_ray(img):
     lung_r_mask = np.where(lung_r_mask==mediastinum_mask[0],0,lung_r_mask)
     lung_r_seg = np.where(lung_r_mask!=0,img[0],0)
 
-    
+    print('Entropy')
     base = 2  # work in units of bits
     H_l = entropy(lung_l_seg[lung_l_seg>0], base=base)
     H_r = entropy(lung_r_seg[lung_r_seg>0], base=base)
@@ -102,7 +102,7 @@ def analyze_x_ray(img):
         output = outputs[idx[0]]
         return output
         
-    
+    print('Pytha') 
     l_lung = pytha(lung_l_mask,origin=(0,0))
     r_lung = pytha(lung_r_mask,origin=(512,0))
     
@@ -131,7 +131,7 @@ def analyze_x_ray(img):
                     output = (x,int(np.median(outputs[0])))        
                     print(output)
                     return output 
-    
+    print('Heart')
     l_heart= x_extrem(heart_mask,origin_x=512)
     r_heart = x_extrem(heart_mask,origin_x=0)
     
@@ -165,7 +165,7 @@ def analyze_x_ray(img):
         shift = int(((np.max(midline[:,1]) / 
                       np.min(midline[:,1])) * 100)-100)
         return midline, shift
-    
+    print('Midline')
     midline_vrt, shift_vrt = find_midline(vertebrae_mask)
     midline_tr, shift_tr = find_midline(trachea_mask)
     
@@ -179,6 +179,7 @@ def analyze_x_ray(img):
     idx = np.where(midline_vrt[...,0]==y_heart)
     midline_heart = midline_vrt[idx[0]][0,1]
     
+    print('Start plotting')
     fig = plt.figure()
     
     x = [r_heart[0]-1,r_heart[0]-1]
