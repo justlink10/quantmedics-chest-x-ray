@@ -89,9 +89,9 @@ class FileUpload(object):
             else:
                 lung_placeholder_l_entropy.text(f"Lung entropy left: normal")
             if H_r > 13:
-                lung_placeholder_l_entropy.text(f"Lung entropy right: high")
+                lung_placeholder_r_entropy.text(f"Lung entropy right: high")
             else:
-                lung_placeholder_l_entropy.text(f"Lung entropy right: normal")
+                lung_placeholder_r_entropy.text(f"Lung entropy right: normal")
             
             st.dataframe(classification.style.highlight_max(axis=0))
  
