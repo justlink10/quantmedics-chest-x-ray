@@ -27,8 +27,14 @@ class FileUpload(object):
         st.sidebar.title("Information")
         CTR_placeholder = st.sidebar.empty()
         CTR_placeholder = st.sidebar.text("CTR: ")
-        lung_placeholder = st.sidebar.empty()
-        lung_placeholder = st.sidebar.text("Lung ratio: ")
+        lung_placeholder_l = st.sidebar.empty()
+        lung_placeholder_l = st.sidebar.text("Lung size left: ")
+        lung_placeholder_r = st.sidebar.empty()
+        lung_placeholder_r = st.sidebar.text("Lung size right: ")
+        lung_placeholder_l_entropy = st.sidebar.empty()
+        lung_placeholder_l_entropy.text(f"Lung entropy left:")
+        lung_placeholder_r_entropy = st.sidebar.empty()
+        lung_placeholder_r_entropy.text(f"Lung entropy right:")
         
         show_file = st.empty()
         if not file:
@@ -76,7 +82,16 @@ class FileUpload(object):
                 placeholder2.pyplot(fig)
             show_file.info("Analyzed the Chest X-ray!")
             CTR_placeholder.text(f"CTR: {CTR}")
-            lung_placeholder.text(f"Lung Ratio: {size_lung_l}")
+            lung_placeholder_l.text(f"Lung size left: {size_lung_l}")
+            lung_placeholder_r.text(f"Lung size right: {size_lung_r}")
+            if H_l > 13:
+                lung_placeholder_l_entropy.text(f"Lung entropy left: high")
+            else:
+                lung_placeholder_l_entropy.text(f"Lung entropy left: normal")
+            if H_r > 13:
+                lung_placeholder_l_entropy.text(f"Lung entropy right: high")
+            else:
+                lung_placeholder_l_entropy.text(f"Lung entropy right: normal")
             
             st.dataframe(classification.style.highlight_max(axis=0))
  
