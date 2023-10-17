@@ -24,7 +24,7 @@ def analyze_x_ray(img):
     "Classification of the chest x-ray"
     classification = model(img[None,...]) # or model.features(img[None,...]) 
     classification = pd.DataFrame({'Pathology': model.pathologies,'Probability':classification[0].detach().numpy()})
-    print(classification)
+    #print(classification)
     
     seg_model = xrv.baseline_models.chestx_det.PSPNet()
     segm = seg_model(img)

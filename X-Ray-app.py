@@ -72,7 +72,6 @@ class FileUpload(object):
 
             img = torch.from_numpy(img)
 
-
             file.close()
             
         if st.sidebar.button("Analyse Chest X-ray"):
