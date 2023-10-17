@@ -20,7 +20,7 @@ from scipy.stats import entropy
 def analyze_x_ray(img):
     # Load model and process image
     model = xrv.models.DenseNet(weights="densenet121-res224-all")
-    print('Classify)
+    print('Classify')
     "Classification of the chest x-ray"
     classification = model(img[None,...]) # or model.features(img[None,...]) 
     classification = pd.DataFrame({'Pathology': model.pathologies,'Probability':classification[0].detach().numpy()})
